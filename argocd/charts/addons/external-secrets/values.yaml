@@ -1,10 +1,11 @@
 # values.yaml
 
+# Default replica count for the main controller
 replicaCount: 1
 
 image:
-  repository: external-secrets/external-secrets
-  tag: 0.9.13
+  repository: ghcr.io/external-secrets/external-secrets
+  tag: 0.9.18
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -30,22 +31,22 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
+# Configuration for the webhook
 webhook:
+  enabled: true
+  replicaCount: 2  # Explicitly setting the replica count for the webhook
+  failurePolicy: Fail
   port: 9443
 
 # Configuration for the cert controller
 certController:
   enabled: true
-
-# Configuration for the webhook
-webhook:
-  enabled: true
-  failurePolicy: Fail
-  port: 9443
+  replicaCount: 2  # Explicitly setting the replica count for the cert controller
 
 # Configuration for the controller
 controller:
   enabled: true
+  replicaCount: 2  # Explicitly setting the replica count for the main controller
   metrics:
     enabled: true
     port: 8080
@@ -85,7 +86,7 @@ externalSecrets:
                 name: aws-secret
                 key: secretAccessKey
 
-
+# ExternalSecret resource example
 apiVersion: external-secrets.io/v1alpha1
 kind: ExternalSecret
 metadata:
@@ -108,3 +109,116 @@ spec:
       remoteRef:
         key: hello-service/credentials
         property: password
+
+
+
+# # values.yaml
+
+# replicaCount: 1
+
+# image:
+#   repository: external-secrets/external-secrets
+#   tag: 0.9.13
+#   pullPolicy: IfNotPresent
+
+# imagePullSecrets: []
+# nameOverride: ""
+# fullnameOverride: ""
+
+# serviceAccount:
+#   create: true
+#   annotations: {}
+#   name: ""
+
+# podAnnotations: {}
+
+# podSecurityContext: {}
+# securityContext: {}
+
+# service:
+#   type: ClusterIP
+#   port: 80
+
+# resources: {}
+# nodeSelector: {}
+# tolerations: []
+# affinity: {}
+
+# webhook:
+#   port: 9443
+
+# # Configuration for the cert controller
+# certController:
+#   enabled: true
+
+# # Configuration for the webhook
+# webhook:
+#   enabled: true
+#   failurePolicy: Fail
+#   port: 9443
+
+# # Configuration for the controller
+# controller:
+#   enabled: true
+#   metrics:
+#     enabled: true
+#     port: 8080
+#     path: /metrics
+
+# # Configuration for metrics
+# metrics:
+#   enabled: true
+#   service:
+#     annotations: {}
+#     labels: {}
+#     type: ClusterIP
+#     port: 8080
+
+# rbac:
+#   create: true
+
+# # Configuration for the external secret stores
+# externalSecrets:
+#   # Example for AWS Secrets Manager
+#   - kind: SecretStore
+#     apiVersion: external-secrets.io/v1alpha1
+#     metadata:
+#       name: aws-secrets-manager
+#       namespace: external-secrets
+#     spec:
+#       provider:
+#         aws:
+#           service: SecretsManager
+#           region: us-west-2
+#           auth:
+#             secretRef:
+#               accessKeyIDSecretRef:
+#                 name: aws-secret
+#                 key: accessKeyID
+#               secretAccessKeySecretRef:
+#                 name: aws-secret
+#                 key: secretAccessKey
+
+
+# apiVersion: external-secrets.io/v1alpha1
+# kind: ExternalSecret
+# metadata:
+#   name: hello-service-credentials
+#   namespace: external-secrets
+# spec:
+#   refreshInterval: "1h"
+#   secretStoreRef:
+#     name: aws-secrets-manager
+#     kind: SecretStore
+#   target:
+#     name: hello-service-credentials
+#     creationPolicy: Owner
+#   data:
+#     - secretKey: username
+#       remoteRef:
+#         key: hello-service/credentials
+#         property: username
+#     - secretKey: password
+#       remoteRef:
+#         key: hello-service/credentials
+#         property: password
