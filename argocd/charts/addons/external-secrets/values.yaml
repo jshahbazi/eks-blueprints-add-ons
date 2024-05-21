@@ -5,7 +5,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/external-secrets/external-secrets
-  tag: 0.9.18
+  tag: ""
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -34,6 +34,10 @@ affinity: {}
 # Configuration for the webhook
 webhook:
   enabled: true
+  image:
+    repository: ghcr.io/external-secrets/external-secrets
+    tag: ""
+    pullPolicy: IfNotPresent
   replicaCount: 2  # Explicitly setting the replica count for the webhook
   failurePolicy: Fail
   port: 9443
@@ -42,6 +46,10 @@ webhook:
 certController:
   enabled: true
   replicaCount: 2  # Explicitly setting the replica count for the cert controller
+  image:
+    repository: ghcr.io/external-secrets/external-secrets
+    tag: ""
+    pullPolicy: IfNotPresent  
 
 # Configuration for the controller
 controller:
